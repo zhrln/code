@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <meta content="width=device-width,user-scalable=no,minimum-scale=1.0,maximum-scale=1.0,initial-scale=1.0" name="viewport">
+        <meta name="format-detection" content="telephone=no, address=no, email=no, time=no">
+        <meta name="mobileOptimized" content="width">
+        <meta name="handheldFriendly" content="true">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <title>Canvas CRC</title>
+    </head>
+    <body>
+        <script>
+            (function(){
+                var FP = function(){
+                    this.canvasWidth = 1;
+                    this.canvasHeight = 1;
+                    this.init();
+                },
+                fn = FP.prototype;
+
+                fn.init = function(){
+                    this.createAndDrawCanvasElement();
+                    this.printLog(this.getCRCCode());
+                };
+
+                fn.createAndDrawCanvasElement = function(){
+                    this._canvas = document.createElement('canvas');
+                    this._context = this._canvas.getContext("2d");
+                    this._canvas.width = this.canvasWidth;
+                    this._canvas.height = this.canvasHeight;
+                    this._context.rect(0, 0, this.canvasWidth, this.canvasHeight);
+                    this._context.fillStyle = "#000";
+                    this._context.fill();
+                };
+
+                fn.getCRCCode = function(){
+                    function bin2hex(s) {
+                        var i, l, o = '', n;
+                        s += '';
+                        for (i = 0, l = s.length; i < l; i++) {
+                            n = s.charCodeAt(i).toString(16);
+                            o += n.length < 2 ? '0' + n : n;
+                        }
+                        return o;
+                    }
+                    var _base64 = this._canvas.toDataURL().replace("data:image/png;base64,","");
+                    var _bin = atob(_base64).slice(-16, -12);
+                    return bin2hex(_bin);
+                };
+
+                fn.printLog = function(str){
+                    document.write('Canvas CRC : ' + str);
+                };
+
+                new FP;
+            })();
+        </script>
+    </body>
+</html>
