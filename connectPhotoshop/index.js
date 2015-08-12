@@ -3,8 +3,6 @@
  */
 var net = require('net');
 
-//通过UNIX socket套接字创建客户端
-// var client = net.connect({path: '/tmp/echo.sock'}, function() {
 //通过端口创建客户端
 var client = net.connect({
     host: '127.0.0.1',
