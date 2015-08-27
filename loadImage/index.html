@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<input type="file" name="hehe" id="hehe"/>
+<script>
+    (function(){
+        var cv = document.createElement('canvas');
+        var ctx = cv.getContext("2d");
+        cv.width = 320;
+        cv.height = 240;
+        document.body.appendChild(cv);
+        document.querySelector('#hehe').addEventListener('change', function(e){
+            var file = this.files[0];
+            var imageType = /image.*/;
+            if (file.type.match(imageType)){
+                var reader = new FileReader();
+                reader.onload = function() {
+                    var img = new Image();
+                    img.onload = function(){
+                        var data = ctx.getImageData(0, 0, 1, img.naturalHeight).data;
+                        debugger
+                        ctx.drawImage(img,0,0,img.naturalWidth,img.naturalHeight,0,0,320,240);
+                    };
+                    img.src = reader.result;
+                };
+                reader.readAsDataURL(file);
+            }else{
+                alert('不是图片');
+            }
+        }, false);
+    }());
+</script>
+</body>
+</html>
