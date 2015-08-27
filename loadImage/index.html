@@ -18,20 +18,85 @@
             var imageType = /image.*/;
             if (file.type.match(imageType)){
                 var reader = new FileReader();
-                reader.onload = function() {
+                reader.onload = function(e) {
+                    var _data = new DataView(e.target.result);
+                    if(_data.getUint16(0, true).toString(16).toLowerCase() == 'd8ff') {
+                        getSegments(e.target.result, function(data){
+
+                        });
+                    }else{
+                        alert('不是JPG文件')
+                    }
+                    /*
                     var img = new Image();
                     img.onload = function(){
-                        var data = ctx.getImageData(0, 0, 1, img.naturalHeight).data;
-                        debugger
                         ctx.drawImage(img,0,0,img.naturalWidth,img.naturalHeight,0,0,320,240);
                     };
                     img.src = reader.result;
+                    */
+                    debugger;
                 };
-                reader.readAsDataURL(file);
+                reader.readAsArrayBuffer(file);
             }else{
                 alert('不是图片');
             }
         }, false);
+
+        function getSegments(rawImage, callback) {
+            if (rawImage instanceof Blob) {
+                var that = this;
+                var fileReader = new FileReader();
+                fileReader.onload = function() {
+                    that.getSegments(fileReader.result, callback);
+                };
+                fileReader.readAsArrayBuffer(rawImage);
+            } else {
+                if (!rawImage.length && !rawImage.byteLength) {
+                    return [];
+                }
+                var head = 0,
+                        segments = [];
+                var length,
+                        endPoint,
+                        seg;
+                var arr = [].slice.call(new Uint8Array(rawImage), 0);
+
+                while (1) {
+                    if (arr[head] === 0xff && arr[head + 1] === 0xda) { //Start of Scan 0xff 0xda  SOS
+                        break;
+                    }
+
+                    if (arr[head] === 0xff && arr[head + 1] === 0xd8) { //Start of Image 0xff 0xd8  SOI
+                        head += 2;
+                    } else { //找到每个marker
+                        length = arr[head + 2] * 256 + arr[head + 3]; //每个marker 后 的两个字节为 该marker信息的长度
+                        endPoint = head + length + 2;
+                        seg = arr.slice(head, endPoint); //截取信息
+                        head = endPoint;
+                        segments.push(seg); //将每个marker + 信息 push 进去。
+                    }
+                    if (head > arr.length) {
+                        break;
+                    }
+                }
+                callback(segments);
+            }
+        }
+
+        function getEXIF(segments) {
+            if (!segments.length) {
+                return [];
+            }
+            var seg = [];
+            for (var x = 0; x < segments.length; x++) {
+                var s = segments[x];
+                //TODO segments
+                if (s[0] === 0xff && s[1] === 0xe1) { // app1 exif 0xff 0xe1
+                    seg = seg.concat(s);
+                }
+            }
+            return seg;
+        }
     }());
 </script>
 </body>
