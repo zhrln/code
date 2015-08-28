@@ -5,14 +5,15 @@
     <title></title>
 </head>
 <body>
-<input type="file" name="hehe" id="hehe"/>
+<p>
+    <input type="file" name="hehe" id="hehe"/>
+</p>
 <script>
     (function(){
+
         var cv = document.createElement('canvas');
         var ctx = cv.getContext("2d");
-        cv.width = 320;
-        cv.height = 240;
-        document.body.appendChild(cv);
+
         document.querySelector('#hehe').addEventListener('change', function(e){
             var file = this.files[0];
             var imageType = /image.*/;
@@ -22,19 +23,18 @@
                     var _data = new DataView(e.target.result);
                     if(_data.getUint16(0, true).toString(16).toLowerCase() == 'd8ff') {
                         getSegments(e.target.result, function(data){
-
+                            var EXIF = getEXIF(data);
+                            if(EXIF.length){
+                                console.log(EXIF.map(function(i){
+                                    return prefix(i.toString(16));
+                                }).join(' '));
+                            }else{
+                                alert('没有 Exif 信息');
+                            }
                         });
                     }else{
                         alert('不是JPG文件')
                     }
-                    /*
-                    var img = new Image();
-                    img.onload = function(){
-                        ctx.drawImage(img,0,0,img.naturalWidth,img.naturalHeight,0,0,320,240);
-                    };
-                    img.src = reader.result;
-                    */
-                    debugger;
                 };
                 reader.readAsArrayBuffer(file);
             }else{
@@ -42,47 +42,91 @@
             }
         }, false);
 
-        function getSegments(rawImage, callback) {
-            if (rawImage instanceof Blob) {
-                var that = this;
-                var fileReader = new FileReader();
-                fileReader.onload = function() {
-                    that.getSegments(fileReader.result, callback);
-                };
-                fileReader.readAsArrayBuffer(rawImage);
-            } else {
-                if (!rawImage.length && !rawImage.byteLength) {
-                    return [];
-                }
-                var head = 0,
-                        segments = [];
-                var length,
-                        endPoint,
-                        seg;
-                var arr = [].slice.call(new Uint8Array(rawImage), 0);
+        var TiffTags = {
+            "0100": "ImageWidth",
+            "0101": "ImageHeight",
+            "8769": "ExifIFDPointer",
+            "8825": "GPSInfoIFDPointer",
+            "A005": "InteroperabilityIFDPointer",
+            "0102": "BitsPerSample",
+            "0103": "Compression",
+            "0106": "PhotometricInterpretation",
+            "0112": "Orientation",
+            "0115": "SamplesPerPixel",
+            "011C": "PlanarConfiguration",
+            "0212": "YCbCrSubSampling",
+            "0213": "YCbCrPositioning",
+            "011A": "XResolution",
+            "011B": "YResolution",
+            "0128": "ResolutionUnit",
+            "0111": "StripOffsets",
+            "0116": "RowsPerStrip",
+            "0117": "StripByteCounts",
+            "0201": "JPEGInterchangeFormat",
+            "0202": "JPEGInterchangeFormatLength",
+            "012D": "TransferFunction",
+            "013E": "WhitePoint",
+            "013F": "PrimaryChromaticities",
+            "0211": "YCbCrCoefficients",
+            "0214": "ReferenceBlackWhite",
+            "0132": "DateTime",
+            "010E": "ImageDescription",
+            "010F": "Make",
+            "0110": "Model",
+            "0131": "Software",
+            "013B": "Artist",
+            "8298": "Copyright"
+        };
 
-                while (1) {
-                    if (arr[head] === 0xff && arr[head + 1] === 0xda) { //Start of Scan 0xff 0xda  SOS
-                        break;
-                    }
-
-                    if (arr[head] === 0xff && arr[head + 1] === 0xd8) { //Start of Image 0xff 0xd8  SOI
-                        head += 2;
-                    } else { //找到每个marker
-                        length = arr[head + 2] * 256 + arr[head + 3]; //每个marker 后 的两个字节为 该marker信息的长度
-                        endPoint = head + length + 2;
-                        seg = arr.slice(head, endPoint); //截取信息
-                        head = endPoint;
-                        segments.push(seg); //将每个marker + 信息 push 进去。
-                    }
-                    if (head > arr.length) {
-                        break;
-                    }
-                }
-                callback(segments);
-            }
+        /**
+         * 数据补零
+         * @param str
+         * @returns {String}
+         */
+        function prefix(str) {
+            return str.length == 1 ? ('0' + str) : str;
         }
 
+        /**
+         * 取所有 FF 头标识的区段
+         * @param rawImage
+         * @param callback
+         * @returns {Array}
+         */
+        function getSegments(rawImage, callback) {
+            if (!rawImage.length && !rawImage.byteLength) {
+                return [];
+            }
+            var head = 0, segments = [];
+            var length, endPoint, seg;
+            var arr = [].slice.call(new Uint8Array(rawImage), 0);
+
+            while (1) {
+                if (arr[head] === 0xff && arr[head + 1] === 0xda) { // 数据流开始 Start of stream
+                    break;
+                }
+
+                if (arr[head] === 0xff && arr[head + 1] === 0xd8) { //FFD8 JPG 标识
+                    head += 2;
+                } else { //找所有 marker
+                    length = arr[head + 2] * 256 + arr[head + 3]; //每个 marker 后的两个字节为 marker 信息长度
+                    endPoint = head + length + 2;
+                    seg = arr.slice(head, endPoint); //截取信息
+                    head = endPoint;
+                    segments.push(seg); //将每个marker + 信息 push 进去。
+                }
+                if (head > arr.length) {
+                    break;
+                }
+            }
+            callback(segments);
+        }
+
+        /**
+         * 取标志位为 FFE1 的 EXIF 信息
+         * @param segments
+         * @returns {Array}
+         */
         function getEXIF(segments) {
             if (!segments.length) {
                 return [];
@@ -90,8 +134,17 @@
             var seg = [];
             for (var x = 0; x < segments.length; x++) {
                 var s = segments[x];
-                //TODO segments
-                if (s[0] === 0xff && s[1] === 0xe1) { // app1 exif 0xff 0xe1
+                if (s[0] === 0xff && s[1] === 0xe1) { // FFE1 为 EXIF 标志位
+                    /*
+                    // 区段 [4-8] 为 exif 标识符
+                    var _exifFlag = (s.slice(4,8) || []).map(function(i){
+                        return String.fromCharCode(i).toLowerCase()
+                    }).join('');
+
+                    if(_exifFlag === 'exif'){
+                        seg.push(s);
+                    }
+                    */
                     seg = seg.concat(s);
                 }
             }
