@@ -69,6 +69,14 @@ Connect.prototype.start = function (options) {
             }
         });
 
-        //return connectionDeferred.promise;
+        return connectionDeferred.promise;
     }
+
+    return connectToPhotoshop()
+        .then(function (Connect) {
+            debugger
+        });
 };
+
+var c = new Connect;
+c.start();

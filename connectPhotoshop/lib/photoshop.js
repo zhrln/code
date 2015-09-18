@@ -37,7 +37,7 @@
     // ---------
     
     // Connection constants
-    var DEFAULT_PASSWORD       = "password",
+    var DEFAULT_PASSWORD       = "860926",
         DEFAULT_PORT           = 49494,
         DEFAULT_HOSTNAME       = "127.0.0.1",
         SOCKET_KEEPALIVE_DELAY = 1000; //milliseconds
