@@ -72,11 +72,19 @@ Connect.prototype.start = function (options) {
         return connectionDeferred.promise;
     }
 
-    return connectToPhotoshop()
-        .then(function (Connect) {
-            debugger
-        });
+    return connectToPhotoshop();
 };
 
 var c = new Connect;
-c.start();
+
+c.start({
+    hostname: "127.0.0.1",
+    password: "860926",
+    port: 49494
+}).then(function(Connect){
+    debugger;
+}).done(function(){
+    debugger
+}, function(err){
+    debugger
+});
