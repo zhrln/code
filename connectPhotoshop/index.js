@@ -82,8 +82,8 @@ c.start({
     password: "860926",
     port: 49494
 }).then(function(Connect){
-    debugger;
-}).done(function(){
+    return Connect._photoshop;
+}).done(function(photoshopClient){
     debugger
 }, function(err){
     debugger
