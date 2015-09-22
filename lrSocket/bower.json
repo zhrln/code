@@ -1,0 +1,11 @@
+{
+  "name": "siam",
+  "version": "1.0.0",
+  "authors": [
+    "rui<skyperson@gmail.com>"
+  ],
+  "dependencies": {
+    "zepto": "latest",
+    "requirejs": "~2.1.19"
+  }
+}
