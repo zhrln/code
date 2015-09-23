@@ -5,6 +5,5 @@ define(['zepto', 'connect'], function($, Connect){
     var connect = new Connect({
         'host': 'ws://' + window.location.host
     });
-    connect.socket.emit('access', {'type': 'Visitor'});
-    debugger
+    connect.socket.emit('createRoom', {'name': 'room01'});
 });

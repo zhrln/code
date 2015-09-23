@@ -13,6 +13,11 @@
             // 远端
             'flexible': '//g.tbcdn.cn/mtb/lib-flexible/0.3.2/flexible'
         },
-        urlArgs: 'v=20150922'
+        shim: {
+            zepto: {
+                exports: '$'
+            }
+        },
+        urlArgs: 'v=1.0.0'
     });
 }());

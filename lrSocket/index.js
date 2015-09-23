@@ -3,19 +3,30 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+var People = require('./bin/app/people');
+var Room = require('./bin/app/room');
+var PeoplePool = require('./bin/app/peoplePool');
+
 app.use("/", express.static(__dirname + '/src'));
 
 app.get('/service', function(req, res){
     res.send('<p>lr-service</p>');
 });
 
+var peoplePool = new PeoplePool;
+
 io.on('connection', function(socket){
     // 新连接-消息
-    // console.log('a user connected');
+    var people = new People();
+    peoplePool[people.getId()] = people;
 
     // 访客连接-消息
-    socket.on('access', function(params){
-        console.log(params);
+    socket.on('createRoom', function(params){
+        var room = new Room();
+        room._create(params);
+        console.log('房间:',room);
+        console.log('参数:',params);
+        console.log('玩家池:',peoplePool);
     });
 
     //用户加入-消息
