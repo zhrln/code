@@ -2,6 +2,7 @@
  * Created by yanjing on 9/23/15.
  */
 var crypto = require('crypto');
+var config = require('../../config');
 /**
  * 全局对象检测
  * @param obj
@@ -38,7 +39,8 @@ exports.serializer = function(num){
  * @returns {number}
  */
 exports.hash = function(num){
-    return this.serializer(num);
+    var seed = config.hashSeed;
+    return this.serializer(num + seed);
 };
 
 /**

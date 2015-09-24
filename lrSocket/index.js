@@ -18,7 +18,7 @@ var peoplePool = new PeoplePool;
 io.on('connection', function(socket){
     // 新连接-消息
     var people = new People();
-    peoplePool[people.getId()] = people;
+    peoplePool[people.id] = people;
 
     // 访客连接-消息
     socket.on('createRoom', function(params){

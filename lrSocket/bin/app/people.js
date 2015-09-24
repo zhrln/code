@@ -15,24 +15,18 @@ var People = function(options){
         name: 'people-' + id
     }, options);
 
-    this.id = id;
-    this.hash = _U.hash(id);
+    Object.defineProperty(this, "id", {
+        value: id,
+        writable: false
+    });
+    Object.defineProperty(this, "hash", {
+        value: _U.hash(id),
+        writable: false
+    });
     this.name = opts.name;
     return this;
 };
 
 var fn = People.prototype;
-
-fn.getName = function(){
-    return this.name;
-};
-
-fn.getId = function(){
-    return this.id;
-};
-
-fn.getPeopleById = function(hash, id){
-
-};
 
 module.exports = People;
