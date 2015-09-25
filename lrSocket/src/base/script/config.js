@@ -2,7 +2,7 @@
  * Created by yanjing on 7/15/15.
  */
 (function(){
-    var base = '/asset/base';
+    var base = '/base';
     require.config({
         deps: ['flexible'],
         paths: {
