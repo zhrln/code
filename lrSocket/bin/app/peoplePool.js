@@ -4,33 +4,36 @@
 var _U = require('../base/util');
 var config = require('../../config');
 
-var PeoplePool = function(options){
+function PeoplePool(){
     var id = _U.serializer();
+    var max = config.peoplePoolMax;
+    var peoplePool = [];
 
-    Object.defineProperty(this, "id", {
-        value: id,
-        writable: false
-    });
-    Object.defineProperty(this, "max", {
-        value: config.peoplePoolMax,
-        writable: false
-    });
-    return this;
-};
+    function add(people){
+        if(!peoplePool[people.id]){
+            peoplePool[people.id] = people;
+        }
+        return peoplePool[people.id];
+    }
 
-var fn = PeoplePool.prototype;
+    function del(id){
+        delete peoplePool[id];
+    }
 
+    function getPeopleById(id){
+        return peoplePool[id];
+    }
 
-fn.getPeopleById = function(hash, id){
+    function getPeoples(){
+        return peoplePool;
+    }
 
-};
-
-fn.add = function(people){
-
-};
-
-fn.del = function(id){
-
-};
+    return {
+        add: add,
+        del: del,
+        getPeopleById: getPeopleById,
+        getPeoples: getPeoples
+    }
+}
 
 module.exports = PeoplePool;

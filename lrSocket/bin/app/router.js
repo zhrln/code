@@ -10,8 +10,6 @@ module.exports = function(io){
 
     io.on('connection', function(socket){
         // 新连接-消息
-        var people = new People();
-        peoplePool[people.id] = people;
 
         // 访客连接-消息
         socket.on('createRoom', function(params){
@@ -23,8 +21,14 @@ module.exports = function(io){
 
         //用户加入-消息
         socket.on('login', function(obj){
+
             // 将用户 xxx 信息存入本次 socket 会话
-            socket.xxx = obj['xxx'];
+            var people = new People({
+                name: obj.name
+            });
+            peoplePool.add(people);
+            socket.people = people;
+            console.log('玩家池:',peoplePool.getPeoples());
 
             //广播加入消息
             io.emit('login', {});
@@ -32,6 +36,8 @@ module.exports = function(io){
 
         //用户退出-消息
         socket.on('disconnect', function(){
+            peoplePool.del(socket.people.id);
+            console.log('玩家池:',peoplePool.getPeoples());
             //广播退出消息
             io.emit('logout', {});
         });
