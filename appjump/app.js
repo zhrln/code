@@ -39,7 +39,8 @@ var buildIntent = function (a) {
         tbmovie: "com.taobao.movie.android",
         taobaowebview: "com.taobao.taobao",
         taobao: "com.taobao.taobao",
-        tmall: "com.tmall.wireless"
+        tmall: "com.tmall.wireless",
+        yulebao: "com.taobao.android.taotv.yulebao"
     };
     var d = 'Intent;scheme=' + b._protocol + ';package=' + c[b._protocol] + ';end', intent_Protocol = 'intent', intentUri = intent_Protocol + '://' + b.host + b.pathname + b.search + '#' + d;
     return intentUri

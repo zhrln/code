@@ -1,0 +1,131 @@
+<? echo "<".'!doctype html>'; ?>
+<? echo "<".'html>'; ?>
+<? echo "<".'head>'; ?>
+<meta charset="UTF-8">
+<meta name="format-detection" content="telephone=no, address=no, email=no, time=no">
+<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0">
+<title>APP 下载</title>
+<style>
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden
+  }
+</style>
+<script type="text/javascript" src="//g.alicdn.com/mtb/??lib-flexible/0.3.2/flexible.js,app-jump/0.6.6/combo.js,app-jump/0.6.6/jump_css.js,app-jump/0.6.6/jump.js"></script>
+<? echo "<"."/head>"; ?>
+<? echo "<"."body>"; ?>
+<script>
+  //lib.callapp.gotoPage(getParams('to'));
+  function getParams(name){
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = location.search.substr(1).match(reg);
+    return r ? decodeURIComponent(r[2]) : '';
+  }
+
+  var JUMP_DATA = {
+    altText: getParams('tips') || '亲，如果未下载娱乐宝APP，快去下载吧',
+    url: getParams('url') || "//yulebao.taobao.com",
+    auto: "false",
+    downUrl: getParams('dl') || '//www.taobao.com/go/act/video/ylb/app-download.php?from=appjump',
+    downText: getParams('btnText') || '下载娱乐宝APP',
+    text: "正在打开...",
+    goText: "暂不下载",
+    schema: getParams('to') || "yulebao://yulebao.taobao.com"
+  };
+  var localUrl = new lib.httpurl(location.href);
+  if (localUrl.params.__ja) {
+    JUMP_DATA.auto = localUrl.params.__ja
+  }
+  if (localUrl.params.__q) {
+    JUMP_DATA.downUrl = "//www.taobao.com/go/act/video/ylb/app-download.php?from=votedetail"
+  } else {
+    if (localUrl.params.__du) {
+      JUMP_DATA.downUrl = localUrl.params.__du
+    }
+  }
+  var platform = "unkown";
+  if (lib.env.os.isIPhone || lib.env.os.isIPod) {
+    platform = "iPhone"
+  } else {
+    if (lib.env.os.isAndroid) {
+      platform = "Android"
+    }
+  }
+  try {
+    var schema = JSON.parse(JUMP_DATA.schema);
+    if (typeof schema === "object") {
+      schema = schema[platform] || "//yulebao.taobao.com"
+    }
+  } catch (e) {
+    var schema = JUMP_DATA.schema
+  }
+  try {
+    var url = JSON.parse(JUMP_DATA.url);
+    if (typeof url === "object") {
+      url = url[platform] || "//yulebao.taobao.com"
+    }
+  } catch (e) {
+    var url = JUMP_DATA.url
+  }
+  try {
+    var auto = JSON.parse(JUMP_DATA.auto);
+    if (typeof auto === "object") {
+      auto = auto[platform] || "false"
+    }
+  } catch (e) {
+    var auto = JUMP_DATA.auto
+  }
+  try {
+    var downUrl = JSON.parse(JUMP_DATA.downUrl);
+    if (typeof downUrl === "object") {
+      downUrl = downUrl[platform] || "false"
+    }
+  } catch (e) {
+    var downUrl = JUMP_DATA.downUrl
+  }
+  if (downUrl) {
+    downUrl = decodeURIComponent(downUrl)
+  }
+  var fillSchemaKeys = schema.match(/\\{\\{([^{}]+)\\}\\}/g);
+  var fillJumpKeys = url.match(/\\{\\{([^{}]+)\\}\\}/g);
+  if (fillSchemaKeys) {
+    for (var i = 0; i < fillSchemaKeys.length; i++) {
+      schema = schema.replace(new RegExp(fillSchemaKeys[i].replace(/([{}])/g, function (a) {
+        return "\\\\" + a
+      }), "gi"), localUrl.params[fillSchemaKeys[i].replace(/([{}])/g, "")] || "")
+    }
+  }
+  if (fillJumpKeys) {
+    for (var i = 0; i < fillJumpKeys.length; i++) {
+      url = url.replace(new RegExp(fillJumpKeys[i].replace(/([{}])/g, function (a) {
+        return "\\\\" + a;
+      }), "gi"), localUrl.params[fillJumpKeys[i].replace(/([{}])/g, "")] || "")
+    }
+  }
+  var schemaUrl = new lib.httpurl(schema);
+  var jumpUrl = new lib.httpurl(url);
+  for (var key in localUrl.params) {
+    schemaUrl.params[key] = localUrl.params[key];
+    jumpUrl.params[key] = localUrl.params[key]
+  }
+  app.jump.tip({
+    schema: schemaUrl.toString(),
+    goText: JUMP_DATA.goText || "继续访问",
+    downText: JUMP_DATA.downText || "下载娱乐宝APP",
+    text: JUMP_DATA.text || "正在打开娱乐宝APP...",
+    altText: JUMP_DATA.altText || "如果您未安装娱乐宝，还可以：",
+    onGo: function () {
+      location.href = url.toString()
+    },
+    downUrl: downUrl
+  });
+  if (auto === true || auto === "true" || auto === "1") {
+    setTimeout(function () {
+      location.href = jumpUrl.toString()
+    }, 1500)
+  }
+
+</script>
+<? echo "<".'/body>'; ?>
+<? echo "<".'/html>'; ?>
