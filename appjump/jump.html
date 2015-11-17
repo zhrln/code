@@ -50,17 +50,6 @@
             var d = 'Intent;scheme=' + b._protocol + ';package=' + c[b._protocol] + ';end', intent_Protocol = 'intent', intentUri = intent_Protocol + '://' + b.host + b.pathname + b.search + '#' + d;
             return intentUri
         };
-        var openIframeIntent = function (a) {
-            var b = document.getElementById('iframeGo');
-            if (!b) {
-                b = document.createElement('iframe');
-                b.id = 'iframeGo';
-                b.name = 'iframeGo';
-                b.style.display = 'none';
-                document.body.appendChild(b)
-            }
-            b.src = a
-        };
         var clickOpenIntent = function (a, b) {
             var c = document.getElementById('openAppLinkWithClick'), evt;
             if (!c) {
@@ -114,22 +103,24 @@
         if (downUrl) {
             downUrl = decodeURIComponent(downUrl)
         }
-        var fillSchemaKeys = schema.match(/\\{\\{([^{}]+)\\}\\}/g);
-        var fillJumpKeys = url.match(/\\{\\{([^{}]+)\\}\\}/g);
+        /* 上传到TMS的时候需要注意,反斜杠需要x2 */
+        var fillSchemaKeys = schema.match(/\{\{([^{}]+)}}/g);
+        var fillJumpKeys = url.match(/\{\{([^{}]+)}}/g);
         if (fillSchemaKeys) {
             for (var i = 0; i < fillSchemaKeys.length; i++) {
                 schema = schema.replace(new RegExp(fillSchemaKeys[i].replace(/([{}])/g, function (a) {
-                    return "\\\\" + a
+                    return "\\" + a
                 }), "gi"), localUrl.params[fillSchemaKeys[i].replace(/([{}])/g, "")] || "")
             }
         }
         if (fillJumpKeys) {
             for (var i = 0; i < fillJumpKeys.length; i++) {
                 url = url.replace(new RegExp(fillJumpKeys[i].replace(/([{}])/g, function (a) {
-                    return "\\\\" + a;
+                    return "\\" + a;
                 }), "gi"), localUrl.params[fillJumpKeys[i].replace(/([{}])/g, "")] || "")
             }
         }
+
         var schemaUrl = new lib.httpurl(schema);
         var jumpUrl = new lib.httpurl(url);
 
