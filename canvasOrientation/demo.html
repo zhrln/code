@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="jpeg_encoder_basic.js"></script>
+    <script src="jpeg_meta.js"></script>
+</head>
+<body>
+<input type="file" id="ipt">
+<script>
+    (function(){
+
+        var _canvas = document.createElement('canvas'),
+            _context = _canvas.getContext("2d"),
+            input = document.querySelector('#ipt'),
+            img = new Image,
+            encoder = new JPEGEncoder;
+
+        img.onload = function(){
+            _canvas.width = this.width;
+            _canvas.height = this.height;
+            _context.drawImage(this,0,0);
+
+            var theImgData = (_context.getImageData(0, 0, _canvas.width, _canvas.height));
+            var rawData = encoder.encode(theImgData, 60, true);
+            var blob = new Blob([rawData.buffer], {type: 'image/jpeg'});
+            var jpegURI = URL.createObjectURL(blob);
+
+            var _img = document.createElement('img');
+            _img.src = jpegURI;
+            document.body.appendChild(_img);
+        };
+
+        input.addEventListener('change', function(){
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                try{
+                    var haha = new JpegMeta.JpegFile(e.target.result);
+                    debugger
+                    alert('Orientation: ' + haha.tiff.Orientation.value);
+                }catch (e){
+                    throw e;
+                }
+            };
+            reader.readAsBinaryString(this.files[0]);
+            img.src = URL.createObjectURL(this.files[0])
+        }, false);
+    }());
+</script>
+</body>
+</html>
