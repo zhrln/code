@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lazyload</title>
+  <script src="main.js"></script>
+  <style>
+    div {
+      background-size: 100%;
+    }
+  </style>
+</head>
+<body>
+<div id="app" style="position:absolute;top:0;"></div>
+<div id="app2" style=""></div>
+<script>
+  (function(){
+    var IMG_URL = 'http://img.daily.taobaocdn.net/tfscom/TB13mO3XXXXXXcjXFXXXXXXXXXX.jpg';
+    function createImage(num,id){
+      if(isNaN(num = parseInt(num, 10))){return false}
+      var _fElms = document.createDocumentFragment();
+      var _elm = null;
+      var type = 0;
+      for(var i = 0; i < num; i++){
+        type = Math.round(Math.random());
+        if(type){
+          _elm = new Image();
+        }else{
+          _elm = document.createElement('div');
+        }
+        _elm.style.cssText = 'display: inline-block; width: 200px; height: 200px;';
+        _elm.setAttribute('data-src', IMG_URL);
+        _fElms.appendChild(_elm);
+      }
+      document.getElementById(id).appendChild(_fElms);
+    }
+    createImage(50, 'app');
+    createImage(50, 'app2');
+    var ll = new Lazyload();
+  }());
+</script>
+</body>
+</html>
