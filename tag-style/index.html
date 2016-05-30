@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width,user-scalable=no,minimum-scale=1.0,maximum-scale=1.0,initial-scale=1.0" name="viewport">
+  <meta name="format-detection" content="telephone=no, address=no, email=no, time=no">
+  <title>Title</title>
+  <style>
+    ul,li {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      margin: 0;
+    }
+
+    .wrap {
+      width: 320px;
+      height: 320px;
+      background-color: gray;
+      position: relative;
+    }
+
+
+
+    .i-tag {
+      color: #fff;
+      display: block;
+      position: absolute;
+      left: 90px;
+      top: 100px;
+      height: 12px;
+      width: 12px;
+      border-radius: 50%;
+      background-color: currentColor;
+      box-shadow: 0 0 0 10px rgba(0,0,0,.3);
+    }
+    .i-tag-ctn {
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      -webkit-transform: translate(0, -50%);
+      display: -webkit-box;
+    }
+    .c1, .c2 {
+      display: -webkit-box;
+      -webkit-box-align: center;
+      -webkit-box-pack: start;
+      flex: 1;
+    }
+    .c1 {
+      position: relative;
+    }
+    .c1::before {
+      content: '\200b';
+      display: block;
+      background-color: #fff;
+      height: 2px;
+      width: 20px;
+      box-shadow: 1px 0 1px rgba(0,0,0,.5);
+    }
+    .c1::after {
+      content: '\200b';
+      position: absolute;
+      -webkit-transform: translate(100%, 0);
+      right: 0;
+      background-color: #fff;
+      height: 100%;
+      width: 2px;
+      box-shadow: 1px 0 1px rgba(0,0,0,.5);
+    }
+    .c2 ul li {
+      height: 0;
+      position: relative;
+      margin-bottom: 46px;
+      display: block;
+    }
+    .c2 ul li:last-child {
+      margin-bottom: 0;
+    }
+    .c2 ul li:before {
+      content: '\200b';
+      display: block;
+      width: 7px;
+      height: 2px;
+      background-color: #fff;
+      -webkit-transform: translate(0, -50%);
+      box-shadow: 1px 0 1px rgba(0,0,0,.5);
+    }
+    .c2 span {
+      white-space: nowrap;
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      font-size: 20px;
+      -webkit-transform: translate(0, -50%);
+      background-color: rgba(0,0,0,.3);
+      border-radius: 100px;
+    }
+    span.p1 {
+
+    }
+    span.icon {
+      padding: 0 5px;
+      font-size: 12px;
+    }
+    span.icon:before {
+      content: '\200b';
+      display: inline-block;
+      background: transparent no-repeat center;
+      background-size: 100%;
+      vertical-align: 3px;
+    }
+    span.p1:before {
+      width: 16px;
+      height: 20px;
+      background-image: url(data:image/svg+xml,%3Csvg%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M99.85%20184.982c-13.983-.353-35.47-32.26-39.634-38.647-7.695-11.8-25.587-41.949-25.587-66.848%200-35.549%2029.326-64.469%2065.37-64.469s65.371%2028.92%2065.371%2064.469c0%2024.9-17.891%2055.048-25.586%2066.848-4.164%206.386-25.651%2038.287-39.634%2038.647h-.3zm.157-128.937c-13.107%200-23.77%2010.511-23.77%2023.442s10.663%2023.442%2023.77%2023.442%2023.768-10.512%2023.768-23.442-10.662-23.442-23.768-23.442z%22%20fill%3D%22%23FFF%22%20class%3D%22transform-group%22%2F%3E%3C%2Fsvg%3E);
+    }
+    span.p2:before {
+      width: 16px;
+      height: 20px;
+      background-image: url(data:image/svg+xml,%3Csvg%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M105.325%2023.778l18.893%2038.287a6.595%206.595%200%200%200%204.947%203.6l42.252%206.13c5.39.79%207.546%207.411%203.648%2011.213l-30.577%2029.798a6.576%206.576%200%200%200-1.887%205.823l7.219%2042.079c.914%205.37-4.716%209.46-9.538%206.93l-37.796-19.876a6.595%206.595%200%200%200-6.112%200l-37.786%2019.875c-4.822%202.531-10.462-1.559-9.538-6.93l7.219-42.078a6.602%206.602%200%200%200-1.887-5.823L23.805%2083.008c-3.898-3.802-1.752-10.423%203.638-11.212l42.252-6.131a6.563%206.563%200%200%200%204.947-3.6l18.903-38.287c2.406-4.88%209.374-4.88%2011.78%200%22%20fill%3D%22%23FFF%22%20class%3D%22transform-group%22%2F%3E%3C%2Fsvg%3E);
+    }
+    span.p3:before {
+      width: 16px;
+      height: 20px;
+      background-image: url(data:image/svg+xml,%3Csvg%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M100%2024.93c-41.46%200-75.07%2033.61-75.07%2075.07s33.61%2075.07%2075.07%2075.07%2075.07-33.61%2075.07-75.07S141.46%2024.93%20100%2024.93zm28.151%2093.838a9.384%209.384%200%200%201-9.383%209.384H81.232a9.384%209.384%200%200%201-9.384-9.384V81.232a9.384%209.384%200%200%201%209.384-9.384h37.536a9.384%209.384%200%200%201%209.383%209.384v37.536z%22%20fill%3D%22%23FFF%22%20class%3D%22transform-group%22%2F%3E%3C%2Fsvg%3E);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="i-tag">
+      <div class="i-tag-ctn">
+        <i class="c1"></i>
+        <div class="c2">
+          <ul>
+            <li><span class="icon p1">嚇嚇</span></li>
+            <li><span class="icon p2">哈哈</span></li>
+            <li><span class="icon p3">嚯嚯</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
