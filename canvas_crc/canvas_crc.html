@@ -7,50 +7,41 @@
         <title>Canvas CRC</title>
     </head>
     <body>
+        <p>安卓系统里有不同的浏览器核心,不同核心取到的CRC不一样</p>
+        <p>iOS下据说机器比较相似,取到的指纹容易出现碰撞</p>
         <script>
             (function(){
-                var FP = function(){
-                    this.canvasWidth = 1;
-                    this.canvasHeight = 1;
-                    this.init();
-                },
-                fn = FP.prototype;
 
-                fn.init = function(){
-                    this.createAndDrawCanvasElement();
-                    this.printLog(this.getCRCCode());
-                };
-
-                fn.createAndDrawCanvasElement = function(){
-                    this._canvas = document.createElement('canvas');
-                    this._context = this._canvas.getContext("2d");
-                    this._canvas.width = this.canvasWidth;
-                    this._canvas.height = this.canvasHeight;
-                    this._context.rect(0, 0, this.canvasWidth, this.canvasHeight);
-                    this._context.fillStyle = "#000";
-                    this._context.fill();
-                };
-
-                fn.getCRCCode = function(){
-                    function bin2hex(s) {
-                        var i, l, o = '', n;
-                        s += '';
-                        for (i = 0, l = s.length; i < l; i++) {
-                            n = s.charCodeAt(i).toString(16);
-                            o += n.length < 2 ? '0' + n : n;
-                        }
-                        return o;
+                if(!window['CanvasCRC']){
+                    function createCanvas(){
+                        var _canvas = document.createElement('canvas');
+                        var _context = _canvas.getContext("2d");
+                        _canvas.width = 1;
+                        _canvas.height = 1;
+                        _context.rect(0, 0, 1, 1);
+                        _context.fillStyle = "#000";
+                        _context.fill();
+                        return _canvas;
                     }
-                    var _base64 = this._canvas.toDataURL().replace("data:image/png;base64,","");
-                    var _bin = atob(_base64).slice(-16, -12);
-                    return bin2hex(_bin);
-                };
+                    function getCRC(canvas){
+                        function bin2hex(s) {
+                            var i, l, o = '', n;
+                            s += '';
+                            for (i = 0, l = s.length; i < l; i++) {
+                                n = s.charCodeAt(i).toString(16);
+                                o += n.length < 2 ? '0' + n : n;
+                            }
+                            return o;
+                        }
+                        var _base64 = canvas.toDataURL().replace("data:image/png;base64,","");
+                        var _bin = atob(_base64).slice(-16, -12);
+                        return bin2hex(_bin);
+                    }
+                    window.CanvasCRC = getCRC(createCanvas());
+                }
 
-                fn.printLog = function(str){
-                    document.write('Canvas CRC : ' + str);
-                };
+                document.write(window['CanvasCRC']);
 
-                new FP;
             })();
         </script>
     </body>
