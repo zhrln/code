@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="format-detection" content="telephone=no, address=no, email=no, time=no">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0">
+    <title>Start!</title>
+</head>
+<body>
+    <div class="timer-wrap">
+        <p class="timer timer0"></p>
+        <p class="timer timer1"></p>
+        <p class="timer timer2"></p>
+        <p class="timer timer3"></p>
+        <p class="timer timer4"></p>
+        <p class="timer timer5"></p>
+        <p class="timer timer6"></p>
+        <p class="timer timer7"></p>
+        <p class="timer timer8"></p>
+        <p class="timer timer9"></p>
+        <p class="timer timer10"></p>
+        <p class="timer timer11"></p>
+        <p class="timer timer12"></p>
+        <p class="timer timer13"></p>
+        <p class="timer timer14"></p>
+        <p class="timer timer15"></p>
+        <p class="timer timer16"></p>
+        <p class="timer timer17"></p>
+        <p class="timer timer18"></p>
+        <p class="timer timer19"></p>
+    </div>
+<script src="TimerBus.js"></script>
+<script>
+    var timerBus = TimerBus();
+    var publisher = new timerBus.Publisher();
+    var $timers = document.querySelectorAll('.timer');
+
+    function onUpdate(i, formatDate, Date){
+        $timers[i].innerHTML = [
+            formatDate.day,
+            formatDate.hour,
+            formatDate.minute,
+            formatDate.second
+        ].join(':');
+    }
+
+    function onEnd(i){
+        $timers[i].innerHTML = i + ':end';
+    }
+
+    for(var i = 0; i < 20; i++){
+        publisher.reg(new timerBus.Subscriber(Date.now() + Math.random()*30000,{
+            onUpdate: onUpdate.bind(null, i),
+            onEnd: onEnd.bind(null, i)
+        }));
+    }
+</script>
+</body>
+</html>
